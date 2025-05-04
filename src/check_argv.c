@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   check_argv.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sawadamai <sawadamai@student.42.fr>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/18 16:39:11 by msawada           #+#    #+#             */
-/*   Updated: 2025/04/17 09:55:18 by sawadamai        ###   ########.fr       */
+/*   Created: 2025/04/17 09:54:46 by sawadamai         #+#    #+#             */
+/*   Updated: 2025/04/17 09:55:11 by sawadamai        ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,29 +15,4 @@
 bool check_argv(char *argv, int *philo_num)
 {
 	
-}
-
-int ft_putstr_fd(char *str, int fd)
-{
-	if (fd < 0 || fd > 1024)
-		return (1);
-	if (str == NULL)
-		return (1);
-	while (*str)
-	{
-		write(fd, str, 1);
-		str++;
-	}
-	return (fd);
-}
-
-int main(int argc, char **argv)
-{
-	int philo_num;
-	if (argc != 5 && argc != 6)
-		return (ft_putstr_fd(ARGV_ERR, 2));
-	if (check_argv(argv, &philo_num))
-		return (ft_putstr_fd(ARGV_ERR, 2));
-	// init_philo(argc, argv);
-	return (0);
 }
