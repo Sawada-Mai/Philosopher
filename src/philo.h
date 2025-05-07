@@ -1,42 +1,61 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: sawadamai <sawadamai@student.42.fr>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/18 16:42:07 by msawada           #+#    #+#             */
-/*   Updated: 2025/05/04 11:51:40 by sawadamai        ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-
 #ifndef PHILO_H
-# define PHILO_H
+#define PHILO_H
 
-# include <stdio.h>
-# include <unistd.h>
-# include <stdbool.h>
-# include <pthread.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <sys/time.h>
+#include <unistd.h>
 
+#define ARGV_ERR "Usage: ./philo <philosophers> <die> <eat> <sleep> [meals]\n"
 
+typedef struct s_data {
+	pthread_mutex_t	print_mutex;
+	bool			is_dead;
+	int				philo_num;
+	int				time_to_die;
+	int				time_to_eat;
+	int				time_to_sleep;
+	int				num_must_eat;
+} t_data;
 
-#	define ARGV_ERR "Usage: ./philo <philosophers> <die> <eat> <sleep> [meals]\n"
-
-
-typedef struct s_philo {
+typedef struct s_philo
+{
 	int id;
 	int left_fork;
 	int right_fork;
 	pthread_mutex_t *forks;
-	int time_to_die;    // time in milliseconds
-	int time_to_eat;    // time in milliseconds
-	int time_to_sleep;  // time in milliseconds
-	int num_must_eat;   // number of times each philosopher must eat (optional)
-	int eat_count;      // count of how many times this philosopher has eaten
-	long long last_meal_time;  // timestamp of last meal
+	pthread_mutex_t meal_mutex;
+	int time_to_die;					// time in milliseconds
+	int time_to_eat;					// time in milliseconds
+	int time_to_sleep;				// time in milliseconds
+	int num_must_eat;					// number of times each philosopher must eat (optional)
+	int eat_count;						// count of how many times this philosopher has eaten
+	long long last_meal_time; // timestamp of last meal
+	t_data *data;
 } t_philo;
 
-
+// Function declarations
+long long get_timestamp(void);
+void print_state(t_philo *philo, t_data *data, const char *state);
+void print_take_fork(t_philo *philo, int fork_id);
+bool take_forks(t_philo *philo);
+void put_forks(t_philo *philo);
+void update_meal_time(t_philo *philo);
+bool eat(t_philo *philo);
+bool dream(t_philo *philo);
+bool think(t_philo *philo);
+void *philosopher(void *arg);
+bool setup_philosophers(t_philo *philos, pthread_mutex_t *forks, t_data *data);
+bool check_death(t_philo *philo, long long current_time);
+bool check_meals(t_philo *philos, int philo_num);
+void *monitor(void *arg);
+void run_threads(pthread_t *threads, t_philo *philos, int philo_num);
+bool init_data(t_data *data, int philo_num, char **argv, int argc);
+bool init_resources(t_philo **philos, pthread_t **threads, pthread_mutex_t **forks, int philo_num);
+void cleanup(t_philo *philos, pthread_t *threads, pthread_mutex_t *forks, t_data *data);
+int ft_atoi(const char *str);
+bool check_argv(char **argv);
 
 #endif
