@@ -1,13 +1,5 @@
 #include "philo.h"
 
-void print_state(t_philo *philo, t_data *data, const char *state)
-{
-	pthread_mutex_lock(&data->print_mutex);
-	if (!data->is_dead)
-		printf("%lld %d %s\n", get_timestamp(), philo->id, state);
-	pthread_mutex_unlock(&data->print_mutex);
-}
-
 void *philosopher(void *arg)
 {
 	t_philo *philo;
@@ -21,16 +13,15 @@ void *philosopher(void *arg)
 			usleep(1000);
 		if (!take_forks(philo))
 			break;
-		if (!think(philo))
-			break;
 		if (!eat(philo))
 			break;
-		put_forks(philo);
 		if (philo->num_must_eat != -1 && philo->eat_count >= philo->num_must_eat)
     	break;
 		if (philo->data->is_dead)
 			break;
 		if (!dream(philo))
+			break;
+		if (!think(philo))
 			break;
 	}
 	return NULL;

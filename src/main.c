@@ -8,6 +8,14 @@ void cleanup(t_philo *philos, pthread_t *threads, pthread_mutex_t *forks, t_data
 	free(philos);
 }
 
+void print_state(t_philo *philo, t_data *data, const char *state)
+{
+	pthread_mutex_lock(&data->print_mutex);
+	if (!data->is_dead)
+		printf("%lld %d %s\n", get_timestamp(), philo->id, state);
+	pthread_mutex_unlock(&data->print_mutex);
+}
+
 long long get_timestamp(void)
 {
 	static long long	start_time = 0;
