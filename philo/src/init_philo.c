@@ -1,28 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_philo.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: msawada <msawada@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/10 19:10:16 by msawada           #+#    #+#             */
+/*   Updated: 2025/05/10 19:10:18 by msawada          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
-int ft_atoi(const char *str)
+int	ft_atoi(const char *str)
 {
-	int num = 0;
-	while (*str >= '0' && *str <= '9') {
+	int	num;
+
+	num = 0;
+	while (*str >= '0' && *str <= '9')
+	{
 		num = num * 10 + (*str - '0');
 		str++;
 	}
-	return num;
+	return (num);
 }
 
-bool init_resources(t_philo **philos, pthread_t **threads, pthread_mutex_t **forks, int philo_num)
+bool	init_resources(t_philo **philos, pthread_t **threads,
+		pthread_mutex_t **forks, int philo_num)
 {
 	*threads = malloc(sizeof(pthread_t) * philo_num);
 	if (!*threads)
 		return (false);
-
 	*philos = malloc(sizeof(t_philo) * philo_num);
 	if (!*philos)
 	{
 		free(*threads);
 		return (false);
 	}
-
 	*forks = malloc(sizeof(pthread_mutex_t) * philo_num);
 	if (!*forks)
 	{
@@ -30,11 +44,10 @@ bool init_resources(t_philo **philos, pthread_t **threads, pthread_mutex_t **for
 		free(*philos);
 		return (false);
 	}
-
 	return (true);
 }
 
-bool init_data(t_data *data, int philo_num, char **argv, int argc)
+bool	init_data(t_data *data, int philo_num, char **argv, int argc)
 {
 	pthread_mutex_init(&data->print_mutex, NULL);
 	data->is_dead = false;
@@ -48,9 +61,10 @@ bool init_data(t_data *data, int philo_num, char **argv, int argc)
 	return (true);
 }
 
-bool setup_philosophers(t_philo *philos, pthread_mutex_t *forks, t_data *data)
+bool	setup_philosophers(t_philo *philos, pthread_mutex_t *forks,
+		t_data *data)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < data->philo_num)
