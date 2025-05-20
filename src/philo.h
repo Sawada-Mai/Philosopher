@@ -9,9 +9,11 @@
 #include <unistd.h>
 
 #define ARGV_ERR "Usage: ./philo <philosophers> <die> <eat> <sleep> [meals]\n"
+#define ARGV_NUM_ERR "Non-numeric arguments are mixed in\n"
 
 typedef struct s_data {
 	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	died_mutex;
 	bool			is_dead;
 	int				philo_num;
 	int				time_to_die;
@@ -26,26 +28,25 @@ typedef struct s_philo
 	int left_fork;
 	int right_fork;
 	pthread_mutex_t *forks;
+	int time_to_die;
+	int time_to_eat;
+	int time_to_sleep;
+	int num_must_eat;
+	int eat_count;
 	pthread_mutex_t meal_mutex;
-	int time_to_die;					// time in milliseconds
-	int time_to_eat;					// time in milliseconds
-	int time_to_sleep;				// time in milliseconds
-	int num_must_eat;					// number of times each philosopher must eat (optional)
-	int eat_count;						// count of how many times this philosopher has eaten
-	long long last_meal_time; // timestamp of last meal
+	long long			start_time;
+	long long last_meal_time;
 	t_data *data;
 } t_philo;
 
-// Function declarations
 long long get_timestamp(void);
+void ft_usleep(long long milliseconds);
+bool is_dead(t_data *data);
 void print_state(t_philo *philo, t_data *data, const char *state);
-void print_take_fork(t_philo *philo, int fork_id);
-bool take_forks(t_philo *philo);
-void put_forks(t_philo *philo);
 void update_meal_time(t_philo *philo);
-bool eat(t_philo *philo);
-bool dream(t_philo *philo);
-bool think(t_philo *philo);
+void eat(t_philo *philo);
+void dream(t_philo *philo);
+void think(t_philo *philo);
 void *philosopher(void *arg);
 bool setup_philosophers(t_philo *philos, pthread_mutex_t *forks, t_data *data);
 bool check_death(t_philo *philo, long long current_time);

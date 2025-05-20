@@ -6,7 +6,6 @@ bool is_num(char *str)
 	{
 		if (*str < '0' || *str > '9')
 		{
-			printf("Non-numeric arguments are mixed in\n");
 			return (false);
 		}
 		str++;

@@ -1,16 +1,14 @@
 #include "philo.h"
 
-bool take_forks(t_philo *philo)
+
+bool is_dead(t_data *data)
 {
-	if (philo->data->is_dead)
-		return false;
-	pthread_mutex_lock(&philo->forks[philo->left_fork]);
-	print_state(philo, philo->data, "has taken a fork");
+	bool dead;
 
-	pthread_mutex_lock(&philo->forks[philo->right_fork]);
-	print_state(philo, philo->data, "has taken a fork");
-
-	return true;
+	pthread_mutex_lock(&data->died_mutex);
+	dead = data->is_dead;
+	pthread_mutex_unlock(&data->died_mutex);
+	return (dead);
 }
 
 
@@ -22,31 +20,29 @@ void update_meal_time(t_philo *philo)
 	pthread_mutex_unlock(&philo->meal_mutex);
 }
 
-bool eat(t_philo *philo)
+void eat(t_philo *philo)
 {
-	if (philo->data->is_dead)
-		return false;
+	pthread_mutex_lock(&philo->forks[philo->right_fork]);
+	print_state(philo, philo->data, "has taken a fork");
+	pthread_mutex_lock(&philo->forks[philo->left_fork]);
+	print_state(philo, philo->data, "has taken a fork");
+
 	print_state(philo, philo->data, "is eating");
 	update_meal_time(philo);
-	usleep(philo->time_to_eat * 1000);
+	ft_usleep(philo->time_to_eat);
+
 	pthread_mutex_unlock(&philo->forks[philo->left_fork]);
 	pthread_mutex_unlock(&philo->forks[philo->right_fork]);
-	return true;
 }
 
-bool dream(t_philo *philo)
+
+void dream(t_philo *philo)
 {
-	if (philo->data->is_dead)
-		return false;
 	print_state(philo, philo->data, "is sleeping");
-	usleep(philo->time_to_sleep * 1000);
-	return true;
+	ft_usleep(philo->time_to_sleep);
 }
 
-bool think(t_philo *philo)
+void think(t_philo *philo)
 {
-	if (philo->data->is_dead)
-		return false;
 	print_state(philo, philo->data, "is thinking");
-	return true;
 }

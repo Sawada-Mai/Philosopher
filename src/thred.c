@@ -5,24 +5,15 @@ void *philosopher(void *arg)
 	t_philo *philo;
 
 	philo = (t_philo *)arg;
-	while (1)
+	if (philo->id % 2 == 0)
+		ft_usleep(100);
+	while (!is_dead(philo->data))
 	{
-		if (philo->data->is_dead)
-			break;
-		if (philo->id % 2 == 1)
-			usleep(1000);
-		if (!take_forks(philo))
-			break;
-		if (!eat(philo))
-			break;
+		eat(philo);
 		if (philo->num_must_eat != -1 && philo->eat_count >= philo->num_must_eat)
     	break;
-		if (philo->data->is_dead)
-			break;
-		if (!dream(philo))
-			break;
-		if (!think(philo))
-			break;
+		dream(philo);
+		think(philo);
 	}
 	return NULL;
 }

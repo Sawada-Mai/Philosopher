@@ -6,7 +6,7 @@
 #    By: sawadamai <sawadamai@student.42.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/03/18 16:47:54 by msawada           #+#    #+#              #
-#    Updated: 2025/05/10 17:33:39 by sawadamai        ###   ########.fr        #
+#    Updated: 2025/05/17 22:01:39 by sawadamai        ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ FLAGS = -Wall -Wextra -Werror -O3 -pthread
 
 HEADER = ./src/philo.h
 
-# SANITIZER = -fsanitize=thread
+SANITIZER = -fsanitize=thread
 
 .PHONY: all clean fclean re debug
 

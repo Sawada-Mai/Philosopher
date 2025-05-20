@@ -1,20 +1,27 @@
-
 #include "philo.h"
 
 bool check_death(t_philo *philo, long long current_time)
 {
+	pthread_mutex_lock(&philo->meal_mutex);
 	if (current_time - philo->last_meal_time > philo->time_to_die)
 	{
-		pthread_mutex_lock(&philo->data->print_mutex);
+		pthread_mutex_unlock(&philo->meal_mutex);
+
+		pthread_mutex_lock(&philo->data->died_mutex);
 		if (!philo->data->is_dead)
 		{
 			philo->data->is_dead = true;
+			pthread_mutex_unlock(&philo->data->died_mutex);
+			pthread_mutex_lock(&philo->data->print_mutex);
 			printf("%lld %d died\n", current_time, philo->id);
+			pthread_mutex_unlock(&philo->data->print_mutex);
+			return true;
 		}
-		pthread_mutex_unlock(&philo->data->print_mutex);
-		return (true);
+		pthread_mutex_unlock(&philo->data->died_mutex);
+		return true;
 	}
-	return (false);
+	pthread_mutex_unlock(&philo->meal_mutex);
+	return false;
 }
 
 bool check_meals(t_philo *philos, int philo_num)
@@ -36,13 +43,13 @@ bool check_meals(t_philo *philos, int philo_num)
 	return true;
 }
 
-
 void *monitor(void *arg)
 {
-	t_philo *philos = (t_philo *)arg;
+	t_philo *philos;
 	int i;
 	long long current_time;
 
+	philos = (t_philo *)arg;;
 	while (1)
 	{
 		i = 0;
@@ -50,17 +57,17 @@ void *monitor(void *arg)
 		{
 			current_time = get_timestamp();
 			if (check_death(&philos[i], current_time))
-				return (NULL);
+				return NULL;
 			i++;
 		}
-		if (philos[0].num_must_eat != -1 && check_meals(philos, philos[0].data->philo_num))
+		if (philos[0].num_must_eat != -1 &&
+			check_meals(philos, philos[0].data->philo_num))
 		{
-			pthread_mutex_lock(&philos[0].data->print_mutex);
+			pthread_mutex_lock(&philos[0].data->died_mutex);
 			philos[0].data->is_dead = true;
-			pthread_mutex_unlock(&philos[0].data->print_mutex);
-			return (NULL);
+			pthread_mutex_unlock(&philos[0].data->died_mutex);
+			return NULL;
 		}
-		usleep(1000);
 	}
-	return (NULL);
+	return NULL;
 }
